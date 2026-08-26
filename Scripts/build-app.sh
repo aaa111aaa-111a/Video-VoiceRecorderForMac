@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Assembles dist/Aizuchi.app from the SwiftPM executable.
+# Assembles dist/OptiRecord.app from the SwiftPM executable.
 #
 # There is no Xcode project on purpose: SwiftPM is the single source of truth and
 # this script does the three things an .app needs that `swift build` does not —
@@ -23,10 +23,10 @@ done
 ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 cd "$ROOT"
 
-APP_NAME="Aizuchi"
+APP_NAME="OptiRecord"
 DIST="$ROOT/dist"
 APP="$DIST/$APP_NAME.app"
-VERSION="$(sed -n 's/.*public static let version = "\(.*\)"/\1/p' Sources/AizuchiCore/AppInfo.swift | head -1)"
+VERSION="$(sed -n 's/.*public static let version = "\(.*\)"/\1/p' Sources/OptiRecordCore/AppInfo.swift | head -1)"
 VERSION="${VERSION:-0.0.0}"
 BUILD_NUMBER="$(git rev-list --count HEAD 2>/dev/null || echo 1)"
 
@@ -64,7 +64,7 @@ echo "==> Signing ($SIGN_IDENTITY)"
 # Screen Recording and Microphone permissions are keyed to the bundle id plus the
 # signature. With an ad-hoc signature macOS may re-ask after each rebuild.
 codesign --force --deep --options runtime \
-    --entitlements Resources/Aizuchi.entitlements \
+    --entitlements Resources/OptiRecord.entitlements \
     --sign "$SIGN_IDENTITY" "$APP"
 
 codesign --verify --verbose "$APP"

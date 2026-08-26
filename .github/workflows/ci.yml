@@ -30,7 +30,7 @@ jobs:
         run: swift test -v
 
   package-app:
-    name: Package Aizuchi.app
+    name: Package OptiRecord.app
     runs-on: macos-15
     needs: build-and-test
     steps:
@@ -41,13 +41,13 @@ jobs:
 
       - name: Verify bundle layout
         run: |
-          test -x dist/Aizuchi.app/Contents/MacOS/Aizuchi
-          test -f dist/Aizuchi.app/Contents/Info.plist
-          codesign --verify --verbose dist/Aizuchi.app
+          test -x dist/OptiRecord.app/Contents/MacOS/OptiRecord
+          test -f dist/OptiRecord.app/Contents/Info.plist
+          codesign --verify --verbose dist/OptiRecord.app
 
       - name: Upload artifact
         uses: actions/upload-artifact@v4
         with:
-          name: Aizuchi-app
-          path: dist/Aizuchi.app
+          name: OptiRecord-app
+          path: dist/OptiRecord.app
           if-no-files-found: error

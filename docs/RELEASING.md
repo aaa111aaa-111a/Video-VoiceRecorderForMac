@@ -19,17 +19,17 @@ Apple Developer Program（年 $99）が必要です。
 ./Scripts/build-app.sh --configuration release --sign "Developer ID Application: YOUR NAME (TEAMID)"
 
 # 2. zip に固める（.app のまま notarize はできない）
-ditto -c -k --keepParent dist/Aizuchi.app dist/Aizuchi.zip
+ditto -c -k --keepParent dist/OptiRecord.app dist/OptiRecord.zip
 
 # 3. notarize（初回は認証情報を keychain に保存）
 xcrun notarytool store-credentials "AC_PASSWORD" \
     --apple-id "you@example.com" --team-id "TEAMID" --password "app-specific-password"
 
-xcrun notarytool submit dist/Aizuchi.zip --keychain-profile "AC_PASSWORD" --wait
+xcrun notarytool submit dist/OptiRecord.zip --keychain-profile "AC_PASSWORD" --wait
 
 # 4. チケットを .app に添付して再度 zip
-xcrun stapler staple dist/Aizuchi.app
-ditto -c -k --keepParent dist/Aizuchi.app dist/Aizuchi.zip
+xcrun stapler staple dist/OptiRecord.app
+ditto -c -k --keepParent dist/OptiRecord.app dist/OptiRecord.zip
 ```
 
 ## 注意
@@ -42,5 +42,5 @@ ditto -c -k --keepParent dist/Aizuchi.app dist/Aizuchi.zip
 
 ## バージョン
 
-`Sources/AizuchiCore/AppInfo.swift` の `version` が唯一の真実で、
+`Sources/OptiRecordCore/AppInfo.swift` の `version` が唯一の真実で、
 `build-app.sh` が Info.plist に流し込みます。ビルド番号は `git rev-list --count HEAD`。

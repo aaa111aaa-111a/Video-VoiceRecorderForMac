@@ -1,4 +1,4 @@
-.PHONY: build test app run clean lint
+.PHONY: build test app run install clean
 
 build:
 	swift build
@@ -10,11 +10,11 @@ app:
 	./Scripts/build-app.sh --configuration release
 
 run: app
-	open dist/Aizuchi.app
+	open dist/OptiRecord.app
 
 install: app
-	rm -rf /Applications/Aizuchi.app
-	cp -R dist/Aizuchi.app /Applications/
+	rm -rf /Applications/OptiRecord.app
+	cp -R dist/OptiRecord.app /Applications/
 	@echo "Installed. 初回起動時に画面収録とマイクの許可を求められます。"
 
 clean:

@@ -1,4 +1,4 @@
-# Aizuchi（相槌）
+# OptiRecord
 
 [![CI](https://github.com/aaa111aaa-111a/Video-VoiceRecorderForMac/actions/workflows/ci.yml/badge.svg)](https://github.com/aaa111aaa-111a/Video-VoiceRecorderForMac/actions/workflows/ci.yml)
 
@@ -9,7 +9,7 @@ Zoom / Microsoft Teams / Google Meet を macOS 標準の画面収録（⌘⇧5�
 標準の画面収録に流し込まないためで、従来は BlackHole などの仮想オーディオドライバを
 入れる必要があった。
 
-Aizuchi は ScreenCaptureKit を使って **画面 + システム音声 + マイク** を
+OptiRecord は ScreenCaptureKit を使って **画面 + システム音声 + マイク** を
 1 本のファイルに同期録画する。追加のドライバもカーネル拡張も不要。
 
 > 会議の録画・録音は、参加者の同意と所属組織のポリシーに従って行ってください。
@@ -38,14 +38,14 @@ macOS 15 以降ではマイクも ScreenCaptureKit 経由で取得し、同一�
 ```sh
 git clone https://github.com/aaa111aaa-111a/Video-VoiceRecorderForMac.git
 cd Video-VoiceRecorderForMac
-make app          # dist/Aizuchi.app を生成（ad-hoc 署名）
+make app          # dist/OptiRecord.app を生成（ad-hoc 署名）
 make install      # /Applications へコピー
 ```
 
 `swift build` / `swift test` も単体で動きます（Xcode プロジェクトは持ちません）。
 
 初回起動時に **システム設定 > プライバシーとセキュリティ > 画面収録** で
-Aizuchi を許可してください。ad-hoc 署名のため、リビルドすると許可が
+OptiRecord を許可してください。ad-hoc 署名のため、リビルドすると許可が
 リセットされることがあります。
 
 ## 使い方
@@ -54,7 +54,7 @@ Aizuchi を許可してください。ad-hoc 署名のため、リビルドす�
 2. 録画対象（会議アプリ / 画面）を選ぶ
 3. **メーターが振れているか確認**（相手が喋っているのにシステム音声が動かないなら権限を疑う）
 4. 「録画開始」または ⌃⇧R
-5. 会議終了後にもう一度 ⌃⇧R。`~/Movies/Aizuchi/` に保存されます
+5. 会議終了後にもう一度 ⌃⇧R。`~/Movies/OptiRecord/` に保存されます
 
 ## 現状
 

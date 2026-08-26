@@ -2,10 +2,10 @@
 
 Phase 1 の作業者（worktree 上で作業するエージェント）向けの共通ルール。
 
-## 1. 契約は `AizuchiCore` にある
+## 1. 契約は `OptiRecordCore` にある
 
-自分のモジュールが公開する型は、`Sources/AizuchiCore/Protocols/` の protocol を
-実装する形にすること。**`Sources/AizuchiCore/` と `Package.swift` は編集しない。**
+自分のモジュールが公開する型は、`Sources/OptiRecordCore/Protocols/` の protocol を
+実装する形にすること。**`Sources/OptiRecordCore/` と `Package.swift` は編集しない。**
 契約に不足があると判断したら、勝手に変えずに次のようにする:
 
 1. 自分のモジュール内に必要な型を追加して先へ進む
@@ -17,7 +17,7 @@ Phase 1 の作業者（worktree 上で作業するエージェント）向けの
 
 `docs/TASKS.md` の担当ディレクトリだけを触る。テストは自分のモジュールの
 テストターゲットに置く。テストターゲットが無い場合は `Package.swift` を変更せず、
-既存の `Tests/AizuchiCoreTests/` には**追加しない**（衝突するため）。
+既存の `Tests/OptiRecordCoreTests/` には**追加しない**（衝突するため）。
 
 ## 3. コンパイルできない環境で書いている前提で書く
 

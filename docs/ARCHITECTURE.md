@@ -1,18 +1,18 @@
-# Aizuchi アーキテクチャ
+# OptiRecord アーキテクチャ
 
 ## 解こうとしている問題
 
 macOS 標準の画面収録（⌘⇧5 / QuickTime Player）は **システム音声を録れない**。
 そのため Zoom / Teams / Google Meet を録画しても「相手の声が入っていない」動画ができあがる。
 
-Aizuchi は ScreenCaptureKit を使い、**画面 + システム音声 + マイク**を 1 本の
+OptiRecord は ScreenCaptureKit を使い、**画面 + システム音声 + マイク**を 1 本の
 ファイルに同期して書き出す。仮想オーディオドライバ（BlackHole / Loopback 等）の
 インストールは不要。
 
 ## 全体データフロー
 
 ```
-                ┌──────────────────────── AizuchiCapture ────────────────────────┐
+                ┌──────────────────────── OptiRecordCapture ────────────────────────┐
                 │                                                                 │
   画面 ───────► │ SCStream ──► video CMSampleBuffer ─────────────────────────────┼──┐
   システム音声 ─► │        └──► audio  CMSampleBuffer ──┐                          │  │
@@ -21,7 +21,7 @@ Aizuchi は ScreenCaptureKit を使い、**画面 + システム音声 + マイ�
                 │   or SCStream mic(macOS 15+) ────────┤                          │  │
                 └──────────────────────────────────────┼──────────────────────────┘  │
                                                        ▼                             │
-                        ┌──────────────── AizuchiAudio ─────────────────┐             │
+                        ┌──────────────── OptiRecordAudio ─────────────────┐             │
                         │ AVAudioConverter ─► 48kHz / 2ch / Float32     │             │
                         │ TimelineMixer (PTS 基準のリングバッファ)        │             │
                         │   ├─ gain / mute / レベル計測                  │             │
@@ -29,7 +29,7 @@ Aizuchi は ScreenCaptureKit を使い、**画面 + システム音声 + マイ�
                         └───────────────┬───────────────────────────────┘             │
                                         │ mixed CMSampleBuffer                        │
                                         ▼                                             ▼
-                        ┌──────────────────────── AizuchiRecording ────────────────────┐
+                        ┌──────────────────────── OptiRecordRecording ────────────────────┐
                         │ AVAssetWriter                                                │
                         │   video input : H.264 / HEVC (VideoToolbox HW encode)         │
                         │   audio input : AAC (mixed)                                   │
@@ -38,7 +38,7 @@ Aizuchi は ScreenCaptureKit を使い、**画面 + システム音声 + マイ�
                         └───────────────┬─────────────────────────────────────────────┘
                                         │ RecordingControlling
                                         ▼
-                        ┌──────────────── AizuchiUI / AizuchiApp ───────────┐
+                        ┌──────────────── OptiRecordUI / OptiRecordApp ───────────┐
                         │ MenuBarExtra + 設定ウィンドウ + レベルメーター       │
                         └───────────────────────────────────────────────────┘
 ```
@@ -47,12 +47,12 @@ Aizuchi は ScreenCaptureKit を使い、**画面 + システム音声 + マイ�
 
 | モジュール | 責務 | 依存 |
 |---|---|---|
-| `AizuchiCore` | ドメインモデル・プロトコル契約・設定・純粋関数ヘルパー。**他モジュールはここだけを共通言語にする** | なし |
-| `AizuchiAudio` | フォーマット変換、タイムライン整列ミキサ、レベル計測 | Core |
-| `AizuchiCapture` | ScreenCaptureKit ラッパ、マイク入力、TCC 権限 | Core, Audio |
-| `AizuchiRecording` | AVAssetWriter パイプライン、`RecordingCoordinator` | Core, Audio, Capture |
-| `AizuchiUI` | SwiftUI ビュー / ビューモデル | Core, Recording |
-| `AizuchiApp` | `@main`、アプリライフサイクル、.app バンドル本体 | UI, Recording, Capture |
+| `OptiRecordCore` | ドメインモデル・プロトコル契約・設定・純粋関数ヘルパー。**他モジュールはここだけを共通言語にする** | なし |
+| `OptiRecordAudio` | フォーマット変換、タイムライン整列ミキサ、レベル計測 | Core |
+| `OptiRecordCapture` | ScreenCaptureKit ラッパ、マイク入力、TCC 権限 | Core, Audio |
+| `OptiRecordRecording` | AVAssetWriter パイプライン、`RecordingCoordinator` | Core, Audio, Capture |
+| `OptiRecordUI` | SwiftUI ビュー / ビューモデル | Core, Recording |
+| `OptiRecordApp` | `@main`、アプリライフサイクル、.app バンドル本体 | UI, Recording, Capture |
 
 依存は必ず下向き。上位モジュールの型を下位が知ることはない。
 

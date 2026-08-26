@@ -8,7 +8,7 @@
 - **Phase 3**: 実機での作り込み（同期精度、長時間録画、ショートカット、配布）。
 
 Phase 1 の 5 本は**ファイルの担当領域が重ならない**ように切ってある。
-共有ファイル（`Package.swift`, `Sources/AizuchiCore/**`）は Phase 0 で確定済みで、
+共有ファイル（`Package.swift`, `Sources/OptiRecordCore/**`）は Phase 0 で確定済みで、
 Phase 1 の作業者は原則として触らない。契約の変更が必要になったら、勝手に直さず
 統合担当に上げる。
 
@@ -17,7 +17,7 @@ Phase 1 の作業者は原則として触らない。契約の変更が必要に
 ## Phase 0 — 基盤（完了）
 
 - [x] SwiftPM パッケージ構成（6 モジュール + 2 テストターゲット）
-- [x] `AizuchiCore` の型と protocol 契約
+- [x] `OptiRecordCore` の型と protocol 契約
 - [x] 設定モデルと永続化（前方互換デコード付き）
 - [x] 純粋ロジック（ファイル名生成、ビットレート算出、一時停止タイムライン、レベル正規化）とそのテスト
 - [x] `.app` バンドル組み立てスクリプト + Info.plist + entitlements
@@ -27,9 +27,9 @@ Phase 1 の作業者は原則として触らない。契約の変更が必要に
 
 ## Phase 1 — 並列実装
 
-### A. `AizuchiAudio` — 音声変換とミキサ（この App の心臓部）— **完了**
+### A. `OptiRecordAudio` — 音声変換とミキサ（この App の心臓部）— **完了**
 
-担当ディレクトリ: `Sources/AizuchiAudio/`, `Tests/AizuchiAudioTests/`
+担当ディレクトリ: `Sources/OptiRecordAudio/`, `Tests/OptiRecordAudioTests/`
 
 - [x] `AudioFormatConverter`: 任意の入力 `CMSampleBuffer` → 48kHz/2ch/Float32 へ `AVAudioConverter` で変換。
       モノラルはステレオへ複製。フォーマット変化（デバイス切り替え）でコンバータを作り直す。
@@ -42,9 +42,9 @@ Phase 1 の作業者は原則として触らない。契約の変更が必要に
       合成 PCM を注入して — 遅れて届いたバッファが正しい位置に入る / 欠損が無音で埋まる /
       ドリフトが累積しない / ゲインとミュートが効く / レベル計算が既知の正弦波と一致する。
 
-### B. `AizuchiCapture` — ScreenCaptureKit とマイク、権限 — **完了**
+### B. `OptiRecordCapture` — ScreenCaptureKit とマイク、権限 — **完了**
 
-担当ディレクトリ: `Sources/AizuchiCapture/`
+担当ディレクトリ: `Sources/OptiRecordCapture/`
 
 - [x] `SCStreamScreenCapturer: ScreenCapturing`
       - `SCShareableContent` から `ShareableContentSnapshot` を作る
@@ -62,9 +62,9 @@ Phase 1 の作業者は原則として触らない。契約の変更が必要に
 - [x] 対象ウインドウが閉じた・対象アプリが終了した場合の通知
 - [x] キャプチャ系のエラーを全部 `RecorderError` に翻訳する
 
-### C. `AizuchiRecording` — 書き出しとコーディネータ — **完了**
+### C. `OptiRecordRecording` — 書き出しとコーディネータ — **完了**
 
-担当ディレクトリ: `Sources/AizuchiRecording/`
+担当ディレクトリ: `Sources/OptiRecordRecording/`
 
 - [x] `AssetWriterMediaWriter: MediaWriting`
       - `AVAssetWriter` + 映像入力（H.264/HEVC, `expectsMediaDataInRealTime`）+ 音声入力（AAC）
@@ -81,9 +81,9 @@ Phase 1 の作業者は原則として触らない。契約の変更が必要に
       - 全コールバックを main actor へホップしてから UI に渡す
 - [x] 異常系: ライタ失敗・キャプチャ停止・ディスク不足でも**録れたところまでは残す**
 
-### D. `AizuchiUI` + `AizuchiApp` — メニューバー UI — **完了**
+### D. `OptiRecordUI` + `OptiRecordApp` — メニューバー UI — **完了**
 
-担当ディレクトリ: `Sources/AizuchiUI/`, `Sources/AizuchiApp/`
+担当ディレクトリ: `Sources/OptiRecordUI/`, `Sources/OptiRecordApp/`
 
 - [x] `RecorderViewModel: ObservableObject`（`RecordingControlling` を包む）
 - [x] `PreviewRecordingController`（`RecordingControlling` のモック。SwiftUI プレビュー用）
@@ -95,7 +95,7 @@ Phase 1 の作業者は原則として触らない。契約の変更が必要に
       マイクデバイス / ゲイン / サイドカー出力 / ショートカット / ログイン時に起動
 - [x] `PermissionOnboardingView`: 未許可の権限を並べて、その場で要求・設定を開く
 - [x] `RecordingsListView`: 直近の録画。Finder で表示・再生。
-- [x] `AizuchiApp`: `@main`、`NSApplication` 設定、通知、ログイン時起動（`SMAppService`）
+- [x] `OptiRecordApp`: `@main`、`NSApplication` 設定、通知、ログイン時起動（`SMAppService`）
 
 ### E. ビルド・配布・ドキュメント — **完了**
 
@@ -124,7 +124,7 @@ C（書き出し・コーディネータ）と D（UI）を担当したエージ
 ## Phase 2 — 統合（監督）— **完了**
 
 - [x] 各 worktree のマージと API 齟齬の解消
-- [x] `AizuchiApp` に実装を結線（`RecordingCoordinator` を注入）
+- [x] `OptiRecordApp` に実装を結線（`RecordingCoordinator` を注入）
 - [x] CI 緑化（コンパイルエラー・警告・テスト）
 - [x] 実機チェックリストの作成（下記）
 

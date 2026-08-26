@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # Turns a 1024x1024 PNG into Resources/AppIcon.icns. macOS only (uses sips + iconutil).
 #
-# Aizuchi is a menu bar app (LSUIElement), so this icon only shows up in Finder,
+# OptiRecord is a menu bar app (LSUIElement), so this icon only shows up in Finder,
 # the About panel, and System Settings' privacy panes — which is exactly where
 # the user looks when granting Screen Recording, so it is worth having.
 set -euo pipefail

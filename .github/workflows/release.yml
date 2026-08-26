@@ -20,14 +20,14 @@ jobs:
         run: ./Scripts/build-app.sh --configuration release
 
       - name: Zip
-        run: ditto -c -k --keepParent dist/Aizuchi.app dist/Aizuchi.zip
+        run: ditto -c -k --keepParent dist/OptiRecord.app dist/OptiRecord.zip
 
       - name: Publish
         uses: softprops/action-gh-release@v2
         with:
-          files: dist/Aizuchi.zip
+          files: dist/OptiRecord.zip
           body: |
-            Aizuchi — Apple Silicon Mac 用の会議レコーダー。
+            OptiRecord — Apple Silicon Mac 用の会議レコーダー。
 
             この zip は **ad-hoc 署名**です（Apple による notarize なし）。
             初回起動時は Finder で右クリック > 開く、から起動してください。

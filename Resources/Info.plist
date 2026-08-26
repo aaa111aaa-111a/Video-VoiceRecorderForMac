@@ -5,15 +5,15 @@
     <key>CFBundleDevelopmentRegion</key>
     <string>ja</string>
     <key>CFBundleExecutable</key>
-    <string>Aizuchi</string>
+    <string>OptiRecord</string>
     <key>CFBundleIdentifier</key>
-    <string>app.aizuchi.Aizuchi</string>
+    <string>app.optirecord.OptiRecord</string>
     <key>CFBundleInfoDictionaryVersion</key>
     <string>6.0</string>
     <key>CFBundleName</key>
-    <string>Aizuchi</string>
+    <string>OptiRecord</string>
     <key>CFBundleDisplayName</key>
-    <string>Aizuchi</string>
+    <string>OptiRecord</string>
     <key>CFBundlePackageType</key>
     <string>APPL</string>
     <key>CFBundleShortVersionString</key>
@@ -30,6 +30,6 @@
     <key>NSMicrophoneUsageDescription</key>
     <string>会議中のあなたの声を録音するためにマイクを使用します。オフにしても画面とシステム音声の録画は可能です。</string>
     <key>NSHumanReadableCopyright</key>
-    <string>Aizuchi</string>
+    <string>OptiRecord</string>
 </dict>
 </plist>
