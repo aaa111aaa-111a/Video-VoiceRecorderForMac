@@ -5,6 +5,11 @@ on:
     branches: ["**"]
   pull_request:
   workflow_dispatch:
+  # Pushes made by an app token do not start a workflow run, so while the app is
+  # being built by an agent this schedule is what actually exercises CI. Remove it
+  # once development moves to ordinary pushes.
+  schedule:
+    - cron: "*/10 * * * *"
 
 concurrency:
   group: ci-${{ github.ref }}
@@ -33,6 +38,8 @@ jobs:
     name: Package Aizuchi.app
     runs-on: macos-15
     needs: build-and-test
+    # Only worth the extra minutes on a real push, not on every scheduled poll.
+    if: github.event_name != 'schedule'
     steps:
       - uses: actions/checkout@v4
 
