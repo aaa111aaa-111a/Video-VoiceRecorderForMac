@@ -24,3 +24,6 @@ build/
 *.p12
 *.provisionprofile
 .env
+
+# Agent worktrees
+.claude/
