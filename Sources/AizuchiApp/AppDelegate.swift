@@ -7,6 +7,10 @@ import AizuchiUI
 /// `NSApplicationDelegate` side of the app: things SwiftUI's `App`/`Scene` world
 /// does not cover on its own — quit confirmation while recording, the login item,
 /// the "recording finished" notification, and the global start/stop shortcut.
+/// AppKit calls every delegate method on the main thread, and everything this
+/// touches — the view model, its settings store — is main-actor isolated, so the
+/// whole class is declared that way rather than sprinkling hops through it.
+@MainActor
 final class AppDelegate: NSObject, NSApplicationDelegate {
     private var hotKeyManager: HotKeyManager?
 
