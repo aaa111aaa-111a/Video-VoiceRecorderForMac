@@ -197,13 +197,13 @@ public struct RecordingSettings: Codable, Equatable, Sendable {
         let values = try decoder.container(keyedBy: CodingKeys.self)
         let fallback = RecordingSettings.default
 
+        // `try?` flattens the nested optional, so a missing key and a malformed
+        // value both land on the default.
         func decode<T: Decodable>(_ key: CodingKeys, _ defaultValue: T) -> T {
-            guard let decoded = try? values.decodeIfPresent(T.self, forKey: key) else { return defaultValue }
-            return decoded ?? defaultValue
+            (try? values.decodeIfPresent(T.self, forKey: key)) ?? defaultValue
         }
         func decodeOptional<T: Decodable>(_ key: CodingKeys, _ type: T.Type) -> T? {
-            guard let decoded = try? values.decodeIfPresent(T.self, forKey: key) else { return nil }
-            return decoded
+            try? values.decodeIfPresent(T.self, forKey: key)
         }
 
         quality = decode(.quality, fallback.quality)

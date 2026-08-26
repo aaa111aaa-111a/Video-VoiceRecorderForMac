@@ -36,7 +36,8 @@ public enum Formatters {
 /// Free space on the volume that holds a directory, used to refuse a recording
 /// that would fill the disk halfway through a meeting.
 public enum DiskSpace {
-    public static func availableBytes(at url: URL, fileManager: FileManager = .default) -> Int64? {
+    /// `url` must be a directory that exists; the key is only reported for real volumes.
+    public static func availableBytes(at url: URL) -> Int64? {
         guard let values = try? url.resourceValues(forKeys: [.volumeAvailableCapacityForImportantUsageKey]),
               let capacity = values.volumeAvailableCapacityForImportantUsage else {
             return nil
