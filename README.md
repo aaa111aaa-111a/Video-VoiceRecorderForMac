@@ -1,5 +1,7 @@
 # Aizuchi（相槌）
 
+[![CI](https://github.com/aaa111aaa-111a/Video-VoiceRecorderForMac/actions/workflows/ci.yml/badge.svg)](https://github.com/aaa111aaa-111a/Video-VoiceRecorderForMac/actions/workflows/ci.yml)
+
 **Apple Silicon Mac 用・音声が本当に入る会議レコーダー。**
 
 Zoom / Microsoft Teams / Google Meet を macOS 標準の画面収録（⌘⇧5・QuickTime Player）で
@@ -54,9 +56,19 @@ Aizuchi を許可してください。ad-hoc 署名のため、リビルドす�
 4. 「録画開始」または ⌃⇧R
 5. 会議終了後にもう一度 ⌃⇧R。`~/Movies/Aizuchi/` に保存されます
 
+## 現状
+
+全モジュールが実装済みで、macOS 15 の CI 上でビルド・142 件のユニットテスト・
+`.app` の生成と署名検証まで通っている。
+
+**ただし実機での動作確認はまだ**。CI には画面もマイクも画面収録の権限も無いため、
+「実際に相手の声が録れるか」「長時間録画で音がズレないか」は Apple Silicon Mac 上で
+確かめる必要がある。チェックリストは [docs/TASKS.md](docs/TASKS.md) の Phase 3 に。
+
 ## 設計
 
 [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) を参照。
+音が入らないときの切り分けは [docs/TROUBLESHOOTING.md](docs/TROUBLESHOOTING.md)。
 開発タスクの分解は [docs/TASKS.md](docs/TASKS.md)。
 
 ## ライセンス
