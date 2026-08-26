@@ -72,7 +72,9 @@ final class AbsoluteFrameRingBuffer {
     /// `destination` (one pointer per channel, each with room for at least `frameCount`
     /// frames), zeroing what it reads afterward so a later wraparound never replays it.
     /// Frames that were never written come back as `0`.
-    func read(into destination: UnsafeMutablePointer<UnsafeMutablePointer<Float>>, frameCount: Int, startFrameIndex: Int64) {
+    /// `destination` matches `AVAudioPCMBuffer.floatChannelData`: the array of channel
+    /// pointers is immutable, the samples each one points at are not.
+    func read(into destination: UnsafePointer<UnsafeMutablePointer<Float>>, frameCount: Int, startFrameIndex: Int64) {
         guard frameCount > 0 else { return }
         for channel in 0..<channelCount {
             let dest = destination[channel]
