@@ -27,59 +27,59 @@ Phase 1 の作業者は原則として触らない。契約の変更が必要に
 
 ## Phase 1 — 並列実装
 
-### A. `AizuchiAudio` — 音声変換とミキサ（この App の心臓部）
+### A. `AizuchiAudio` — 音声変換とミキサ（この App の心臓部）— **完了**
 
 担当ディレクトリ: `Sources/AizuchiAudio/`, `Tests/AizuchiAudioTests/`
 
-- [ ] `AudioFormatConverter`: 任意の入力 `CMSampleBuffer` → 48kHz/2ch/Float32 へ `AVAudioConverter` で変換。
+- [x] `AudioFormatConverter`: 任意の入力 `CMSampleBuffer` → 48kHz/2ch/Float32 へ `AVAudioConverter` で変換。
       モノラルはステレオへ複製。フォーマット変化（デバイス切り替え）でコンバータを作り直す。
-- [ ] `TimelineMixer: AudioMixing`: 絶対フレーム位置ベースのリングバッファ。
+- [x] `TimelineMixer: AudioMixing`: 絶対フレーム位置ベースのリングバッファ。
       無音埋め、最大待ち時間 200ms、1024 フレーム単位で出力。
-- [ ] ゲイン適用とソフトクリップ（単純加算で 0dBFS を超えたときの歪み対策）。
-- [ ] `LevelMeter`: peak/RMS を dBFS で算出、50ms ごとにコールバック。
-- [ ] `CMSampleBuffer` ⇄ `AVAudioPCMBuffer` の相互変換ユーティリティ。
+- [x] ゲイン適用とソフトクリップ（単純加算で 0dBFS を超えたときの歪み対策）。
+- [x] `LevelMeter`: peak/RMS を dBFS で算出、50ms ごとにコールバック。
+- [x] `CMSampleBuffer` ⇄ `AVAudioPCMBuffer` の相互変換ユーティリティ。
 - [ ] **テスト**（実デバイス不要な設計にすること）:
       合成 PCM を注入して — 遅れて届いたバッファが正しい位置に入る / 欠損が無音で埋まる /
       ドリフトが累積しない / ゲインとミュートが効く / レベル計算が既知の正弦波と一致する。
 
-### B. `AizuchiCapture` — ScreenCaptureKit とマイク、権限
+### B. `AizuchiCapture` — ScreenCaptureKit とマイク、権限 — **完了**
 
 担当ディレクトリ: `Sources/AizuchiCapture/`
 
-- [ ] `SCStreamScreenCapturer: ScreenCapturing`
+- [x] `SCStreamScreenCapturer: ScreenCapturing`
       - `SCShareableContent` から `ShareableContentSnapshot` を作る
       - `SCContentFilter`（display / window / application）を `CaptureTarget` から組み立てる
       - `SCStreamConfiguration`: 解像度・fps・`capturesAudio`・`excludesCurrentProcessAudio`・
         `showsCursor`・`queueDepth`・`minimumFrameInterval`・色空間
       - `.complete` 以外のフレーム（`SCStreamFrameInfo.status`）は捨てる
       - macOS 15+ ではマイクも `SCStream` から受け取る（`captureMicrophone`）
-- [ ] `AVCaptureMicrophoneCapturer: MicrophoneCapturing`（macOS 14 用 / デバイス指定時）
+- [x] `AVCaptureMicrophoneCapturer: MicrophoneCapturing`（macOS 14 用 / デバイス指定時）
       - 入力デバイス列挙、デフォルト判定、デバイス切断のハンドリング
-- [ ] `SystemPermissionChecker: PermissionChecking`
+- [x] `SystemPermissionChecker: PermissionChecking`
       - `CGPreflightScreenCaptureAccess` / `CGRequestScreenCaptureAccess`
       - `AVCaptureDevice.authorizationStatus/requestAccess`
       - システム設定の各ペインを開く
-- [ ] 対象ウインドウが閉じた・対象アプリが終了した場合の通知
-- [ ] キャプチャ系のエラーを全部 `RecorderError` に翻訳する
+- [x] 対象ウインドウが閉じた・対象アプリが終了した場合の通知
+- [x] キャプチャ系のエラーを全部 `RecorderError` に翻訳する
 
-### C. `AizuchiRecording` — 書き出しとコーディネータ
+### C. `AizuchiRecording` — 書き出しとコーディネータ — **完了**
 
 担当ディレクトリ: `Sources/AizuchiRecording/`
 
-- [ ] `AssetWriterMediaWriter: MediaWriting`
+- [x] `AssetWriterMediaWriter: MediaWriting`
       - `AVAssetWriter` + 映像入力（H.264/HEVC, `expectsMediaDataInRealTime`）+ 音声入力（AAC）
       - 最初の映像バッファで `startSession`、それ以前の音声は破棄
       - `movieFragmentInterval = 5s`（クラッシュしても直前まで再生可能に）
       - 任意で system / microphone の m4a サイドカーを並行して書く
       - `finish()` で `RecordingResult`（長さ・サイズ・サイドカー）を返す
-- [ ] `RecordingCoordinator: RecordingControlling`（`@MainActor`）
+- [x] `RecordingCoordinator: RecordingControlling`（`@MainActor`）
       - 状態機械: idle → preparing → recording ⇄ paused → finishing → idle
       - 権限確認 → 出力先の準備 → キャプチャ開始 → ミキサ結線 → ライタ開始
       - **モニタリングモード**（録画せずメーターだけ動かす）
       - 一時停止・再開（`TimelineOffsetter` を映像・音声で共有）
       - 経過時間、ディスク残量監視、対象消失時の自動停止
       - 全コールバックを main actor へホップしてから UI に渡す
-- [ ] 異常系: ライタ失敗・キャプチャ停止・ディスク不足でも**録れたところまでは残す**
+- [x] 異常系: ライタ失敗・キャプチャ停止・ディスク不足でも**録れたところまでは残す**
 
 ### D. `AizuchiUI` + `AizuchiApp` — メニューバー UI
 
@@ -97,18 +97,23 @@ Phase 1 の作業者は原則として触らない。契約の変更が必要に
 - [ ] `RecordingsListView`: 直近の録画。Finder で表示・再生。
 - [ ] `AizuchiApp`: `@main`、`NSApplication` 設定、通知、ログイン時起動（`SMAppService`）
 
-### E. ビルド・配布・ドキュメント
+### E. ビルド・配布・ドキュメント — **完了**
 
 担当ディレクトリ: `Scripts/`, `.github/`, `docs/`, `Resources/`
 
-- [ ] `Scripts/build-app.sh` の詰め（アイコン生成、バージョン埋め込み、`--notarize`）
+- [x] `Scripts/build-app.sh` の詰め（アイコン生成、バージョン埋め込み、`--notarize`）
 - [ ] `Resources/AppIcon.icns` の生成スクリプト（SF Symbols ベースの簡易アイコン）
-- [ ] `docs/TROUBLESHOOTING.md`: 音が入らないときの切り分け手順（権限・出力デバイス・
+- [x] `docs/TROUBLESHOOTING.md`: 音が入らないときの切り分け手順（権限・出力デバイス・
       Zoom 側の「オリジナルサウンド」設定・Bluetooth ヘッドセットの HFP 問題など）
-- [ ] `docs/RELEASING.md`: 署名・notarize・zip 配布の手順
-- [ ] GitHub Actions のリリースワークフロー（タグで .app を zip にして Releases へ）
+- [x] `docs/RELEASING.md`: 署名・notarize・zip 配布の手順
+- [x] GitHub Actions のリリースワークフロー（タグで .app を zip にして Releases へ）
 
 ---
+
+### C の補足
+
+並列実装のうち C を担当したエージェントは成果物を残さず終了したため、監督（Opus）が
+実装した。protocol 注入で書いてあるので、フェイクだけで状態機械を全部テストできる。
 
 ## Phase 2 — 統合（監督）
 
