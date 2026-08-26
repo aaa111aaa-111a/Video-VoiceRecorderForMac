@@ -1,0 +1,26 @@
+# macOS
+.DS_Store
+
+# Swift / SwiftPM
+.build/
+.swiftpm/
+Package.resolved
+*.o
+*.dSYM/
+
+# Xcode
+*.xcodeproj/
+*.xcworkspace/
+xcuserdata/
+DerivedData/
+
+# Build output
+dist/
+build/
+*.app/
+*.zip
+
+# Local secrets / signing
+*.p12
+*.provisionprofile
+.env
