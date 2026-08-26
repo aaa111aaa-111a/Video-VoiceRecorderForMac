@@ -32,6 +32,9 @@ let package = Package(
         .executableTarget(name: "AizuchiApp", dependencies: ["AizuchiUI", "AizuchiRecording", "AizuchiCapture"]),
 
         .testTarget(name: "AizuchiCoreTests", dependencies: ["AizuchiCore"]),
-        .testTarget(name: "AizuchiAudioTests", dependencies: ["AizuchiAudio", "AizuchiCore"])
+        .testTarget(name: "AizuchiAudioTests", dependencies: ["AizuchiAudio", "AizuchiCore"]),
+        .testTarget(name: "AizuchiCaptureTests", dependencies: ["AizuchiCapture", "AizuchiCore"]),
+        .testTarget(name: "AizuchiRecordingTests", dependencies: ["AizuchiRecording", "AizuchiCore"]),
+        .testTarget(name: "AizuchiUITests", dependencies: ["AizuchiUI", "AizuchiCore"])
     ]
 )
