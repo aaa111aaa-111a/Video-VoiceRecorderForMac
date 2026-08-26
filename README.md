@@ -2,7 +2,7 @@
 
 [![CI](https://github.com/aaa111aaa-111a/Video-VoiceRecorderForMac/actions/workflows/ci.yml/badge.svg)](https://github.com/aaa111aaa-111a/Video-VoiceRecorderForMac/actions/workflows/ci.yml)
 
-**Apple Silicon Mac 用・音声が本当に入る会議レコーダー。**
+**Apple Silicon Mac 用・音声が入る会議レコーダー。**
 
 Zoom / Microsoft Teams / Google Meet を macOS 標準の画面収録（⌘⇧5・QuickTime Player）で
 録画すると、**相手の声が入らない**。macOS はアプリの再生音（システム音声）を
