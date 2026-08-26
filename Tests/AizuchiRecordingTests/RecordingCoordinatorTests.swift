@@ -162,6 +162,9 @@ final class RecordingCoordinatorTests: XCTestCase {
             resolveDirectory: { [directory] _ in directory! },
             clock: { now }
         )
+        // This test builds its own coordinator for the injected clock, so it has to
+        // subscribe the way `makeCoordinator()` does.
+        coordinator.onStateChange = { [weak self] state in self?.states.append(state) }
 
         await coordinator.start(target: target)
         now = now.addingTimeInterval(10)

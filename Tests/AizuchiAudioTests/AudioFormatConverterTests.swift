@@ -73,14 +73,51 @@ final class AudioFormatConverterTests: XCTestCase {
         XCTAssertEqual(output.format.sampleRate, 48_000)
         XCTAssertEqual(output.format.channelCount, 2)
 
+        // The *first* buffer out of a resampling AVAudioConverter is short: the filter has
+        // to fill its history before it can emit, so a few milliseconds stay inside the
+        // converter and come out on the next call. That is a small constant latency on the
+        // non-48kHz microphone path, not a leak — `testResamplingLosesNoFramesOverTime`
+        // below pins the steady-state behaviour. Assert only that we got a substantial,
+        // sane amount of audio here.
         let expectedFrames = Double(inputFrames) * 48_000 / inputRate
-        XCTAssertEqual(Double(output.frameLength), expectedFrames, accuracy: Double(expectedFrames) * 0.05)
+        XCTAssertGreaterThan(Double(output.frameLength), expectedFrames * 0.85)
+        XCTAssertLessThanOrEqual(Double(output.frameLength), expectedFrames * 1.05)
 
         // Energy should survive resampling at roughly the same amplitude (within a few dB).
         let outputChannels = SyntheticAudio.floatChannels(output)
         let level = LevelMeter.level(of: outputChannels[0])
         let inputLevel = LevelMeter.level(of: SyntheticAudio.floatChannels(input)[0])
         XCTAssertEqual(level.rms, inputLevel.rms, accuracy: 3.0)
+    }
+
+    /// The property that actually matters for a long meeting: over a stream of buffers the
+    /// resampler must not swallow audio. Whatever the filter holds back at the start comes
+    /// out on later calls, so the running total converges on the ideal ratio.
+    func testResamplingLosesNoFramesOverTime() throws {
+        let converter = makeConverter()
+        let inputRate = 44_100.0
+        let framesPerBuffer = 4410 // 100ms each
+        let bufferCount = 20 // two seconds
+
+        var producedFrames = 0
+        for index in 0..<bufferCount {
+            let input = SyntheticAudio.sineBuffer(
+                sampleRate: inputRate,
+                channelCount: 2,
+                frameCount: framesPerBuffer,
+                frequency: 440,
+                amplitude: 0.5
+            )
+            let presentationTime = CMTime(value: Int64(index * framesPerBuffer), timescale: CMTimeScale(inputRate))
+            let sampleBuffer = try SyntheticAudio.sampleBuffer(from: input, presentationTime: presentationTime)
+            if let output = try converter.convert(sampleBuffer) {
+                producedFrames += Int(output.frameLength)
+            }
+        }
+
+        let idealFrames = Double(framesPerBuffer * bufferCount) * 48_000 / inputRate
+        // Within one buffer's worth: only the converter's priming may still be outstanding.
+        XCTAssertEqual(Double(producedFrames), idealFrames, accuracy: 4_800)
     }
 
     /// A device switch mid-stream (different sample rate/channel count) must not crash or
