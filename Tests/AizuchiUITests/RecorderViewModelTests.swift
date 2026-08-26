@@ -28,13 +28,16 @@ final class RecorderViewModelTests: XCTestCase {
         SettingsStore(defaults: defaults, notificationCenter: NotificationCenter())
     }
 
+    /// `controller` is optional rather than defaulted to a fresh instance: default
+    /// argument expressions are evaluated in a nonisolated context, and
+    /// `PreviewRecordingController` is main-actor isolated.
     private func makeViewModel(
-        controller: PreviewRecordingController = PreviewRecordingController(initialState: .idle),
+        controller: PreviewRecordingController? = nil,
         silenceThreshold: TimeInterval = 5,
         now: @escaping () -> Date = Date.init
     ) -> RecorderViewModel {
         RecorderViewModel(
-            controller: controller,
+            controller: controller ?? PreviewRecordingController(initialState: .idle),
             settingsStore: makeSettingsStore(),
             defaults: defaults,
             silenceThreshold: silenceThreshold,

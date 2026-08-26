@@ -81,21 +81,21 @@ Phase 1 の作業者は原則として触らない。契約の変更が必要に
       - 全コールバックを main actor へホップしてから UI に渡す
 - [x] 異常系: ライタ失敗・キャプチャ停止・ディスク不足でも**録れたところまでは残す**
 
-### D. `AizuchiUI` + `AizuchiApp` — メニューバー UI
+### D. `AizuchiUI` + `AizuchiApp` — メニューバー UI — **完了**
 
 担当ディレクトリ: `Sources/AizuchiUI/`, `Sources/AizuchiApp/`
 
-- [ ] `RecorderViewModel: ObservableObject`（`RecordingControlling` を包む）
-- [ ] `PreviewRecordingController`（`RecordingControlling` のモック。SwiftUI プレビュー用）
-- [ ] `MenuBarExtra` 本体: 状態表示・経過時間・開始/停止/一時停止
-- [ ] `SourcePickerView`: 画面 / ウインドウ / アプリのタブ。会議アプリを先頭に。
-- [ ] `LevelMeterView`: システム音声とマイクを縦 2 本。無音警告とクリップ表示。
+- [x] `RecorderViewModel: ObservableObject`（`RecordingControlling` を包む）
+- [x] `PreviewRecordingController`（`RecordingControlling` のモック。SwiftUI プレビュー用）
+- [x] `MenuBarExtra` 本体: 状態表示・経過時間・開始/停止/一時停止
+- [x] `SourcePickerView`: 画面 / ウインドウ / アプリのタブ。会議アプリを先頭に。
+- [x] `LevelMeterView`: システム音声とマイクを縦 2 本。無音警告とクリップ表示。
       **「相手が喋っているのに振れない」ときのトラブルシュートを画面内に出す**
-- [ ] `SettingsWindow`: 画質 / fps / コーデック / 保存先 / ファイル名テンプレート /
+- [x] `SettingsWindow`: 画質 / fps / コーデック / 保存先 / ファイル名テンプレート /
       マイクデバイス / ゲイン / サイドカー出力 / ショートカット / ログイン時に起動
-- [ ] `PermissionOnboardingView`: 未許可の権限を並べて、その場で要求・設定を開く
-- [ ] `RecordingsListView`: 直近の録画。Finder で表示・再生。
-- [ ] `AizuchiApp`: `@main`、`NSApplication` 設定、通知、ログイン時起動（`SMAppService`）
+- [x] `PermissionOnboardingView`: 未許可の権限を並べて、その場で要求・設定を開く
+- [x] `RecordingsListView`: 直近の録画。Finder で表示・再生。
+- [x] `AizuchiApp`: `@main`、`NSApplication` 設定、通知、ログイン時起動（`SMAppService`）
 
 ### E. ビルド・配布・ドキュメント — **完了**
 
@@ -110,23 +110,34 @@ Phase 1 の作業者は原則として触らない。契約の変更が必要に
 
 ---
 
-### C の補足
+### 並列実装の実際
 
-並列実装のうち C を担当したエージェントは成果物を残さず終了したため、監督（Opus）が
-実装した。protocol 注入で書いてあるので、フェイクだけで状態機械を全部テストできる。
+5 本のうち B（キャプチャ）と A（ミキサ）はエージェントがコミットまで完了した。
+C（書き出し・コーディネータ）と D（UI）を担当したエージェントはコミットを残さずに
+終了したため、C は監督（Opus）が実装し、D は作業ツリーに残っていた成果物を回収して
+統合した。
+
+このため「エージェントには必ず worktree 内でコミットさせ、ブランチ名を報告させる」
+という運用ルール（docs/AGENT_GUIDE.md §6）は、成果物を失わないために重要だった。
+コミットが無くても作業ツリーからは回収できるが、途中経過か完成品かの判断が難しくなる。
 
 ## Phase 2 — 統合（監督）
 
-- [ ] 各 worktree のマージと API 齟齬の解消
-- [ ] `AizuchiApp` に実装を結線（`RecordingCoordinator` を注入）
-- [ ] CI 緑化（コンパイルエラー・警告・テスト）
+- [x] 各 worktree のマージと API 齟齬の解消
+- [x] `AizuchiApp` に実装を結線（`RecordingCoordinator` を注入）
+- [x] CI 緑化（コンパイルエラー・警告・テスト）
 - [ ] 実機チェックリストの作成（下記）
 
-## Phase 3 — 実機での作り込み
+## Phase 3 — 実機での作り込み（ここから先は実機が必要）
+
+CI（macOS 15 runner）でビルドとテストが通ることまでは確認済み。ただし CI には
+画面も、マイクも、画面収録の権限も無いため、**実際に音が録れるかどうかは実機でしか
+確認できない**。以下は Apple Silicon Mac 上でのチェックリスト。
+
 
 - [ ] Zoom / Teams / Meet それぞれで 30 分録画し、**末尾で音ズレが 50ms 以内**か確認
 - [ ] Bluetooth ヘッドセット接続中・録画中の入力デバイス切り替え
 - [ ] 外部ディスプレイの抜き差し、スリープ復帰
 - [ ] 2 時間超の長時間録画（ファイルサイズ、メモリ、サーマル）
-- [ ] グローバルショートカットの登録（Carbon `RegisterEventHotKey`）
+- [x] グローバルショートカットの登録（Carbon `RegisterEventHotKey`）
 - [ ] 自動録画（会議アプリの起動を検知して録画開始を提案）
