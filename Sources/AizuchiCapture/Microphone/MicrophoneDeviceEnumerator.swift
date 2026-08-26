@@ -3,23 +3,15 @@ import AizuchiCore
 
 /// Lists usable audio input devices for the settings picker.
 enum MicrophoneDeviceEnumerator {
-    // NOTE(uncertain): `AVCaptureDevice.DeviceType.microphone` is recalled as the
-    // modern (macOS 14+ / iOS 17+) catch-all audio input device type introduced
-    // alongside camera device-type unification; `.builtInMicrophone` is its
-    // pre-macOS-14 equivalent. Both names carry some memory uncertainty — this
-    // module's minimum deployment target is already macOS 14, so the `#available`
-    // branch below is largely defensive, but the fallback to
-    // `AVCaptureDevice.devices(for: .audio)` (a much older, solid API) is what
-    // actually keeps this safe if either device-type name is wrong or a discovery
-    // session yields nothing.
+    /// `.microphone` is the macOS 14+ audio input device type. The deployment
+    /// target is already macOS 14, so there is no older branch to keep; the fallback
+    /// to `devices(for:)` only covers a discovery session that finds nothing.
     private static func discoveredDevices() -> [AVCaptureDevice] {
-        let deviceTypes: [AVCaptureDevice.DeviceType]
-        if #available(macOS 14.0, *) {
-            deviceTypes = [.microphone]
-        } else {
-            deviceTypes = [.builtInMicrophone]
-        }
-        let session = AVCaptureDevice.DiscoverySession(deviceTypes: deviceTypes, mediaType: .audio, position: .unspecified)
+        let session = AVCaptureDevice.DiscoverySession(
+            deviceTypes: [.microphone],
+            mediaType: .audio,
+            position: .unspecified
+        )
         let discovered = session.devices
         return discovered.isEmpty ? AVCaptureDevice.devices(for: .audio) : discovered
     }

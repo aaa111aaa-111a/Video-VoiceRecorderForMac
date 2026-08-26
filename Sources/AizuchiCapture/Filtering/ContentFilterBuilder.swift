@@ -24,9 +24,8 @@ enum ContentFilterBuilder {
             guard let display = content.displays.first(where: { $0.displayID == id }) else {
                 throw FilterError.displayNotFound
             }
-            // `RecordingConfiguration` (unlike `RecordingSettings`) does not carry an
-            // `excludesOwnWindows` flag, so this module always keeps Aizuchi's own
-            // windows out of a whole-display recording. See docs/CONTRACT_CHANGES.md.
+            // The caller passes a nil identifier when the user turned the
+            // "exclude my own windows" setting off.
             let excludeIDs = bundleIdentifiersToExcludeFromDisplay(
                 allBundleIdentifiers: content.applications.map(\.bundleIdentifier),
                 ownBundleIdentifier: ownBundleIdentifier

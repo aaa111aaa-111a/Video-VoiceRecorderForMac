@@ -7,17 +7,15 @@ import ScreenCaptureKit
 /// must never reach the writer, or the recorded video would show duplicated or stale
 /// frames.
 enum FrameStatus {
-    // NOTE(uncertain): the `[[SCStreamFrameInfo: Any]]` attachment dictionary shape
-    // and the `SCStreamFrameInfo.status` key mirror the pattern from Apple's own
-    // ScreenCaptureKit sample code, but this cannot be compile-checked here (no local
-    // Swift toolchain — see docs/AGENT_GUIDE.md). If the cast below ever fails to
-    // bridge, `isComplete` degrades to "keep every frame" rather than silently
+    // `SCStreamFrameInfo` is the attachment *key* type (.status, .displayTime,
+    // .contentRect); the value under .status is an `SCFrameStatus` raw value.
+    // If the bridge ever fails, this degrades to "keep every frame" rather than
     // dropping all video, which is the safer failure direction.
     static func isComplete(_ sampleBuffer: CMSampleBuffer) -> Bool {
         guard let attachmentsArray = CMSampleBufferGetSampleAttachmentsArray(sampleBuffer, createIfNecessary: false) as? [[SCStreamFrameInfo: Any]],
               let attachments = attachmentsArray.first,
               let rawStatus = attachments[.status] as? Int,
-              let status = SCStreamFrameInfoStatus(rawValue: rawStatus) else {
+              let status = SCFrameStatus(rawValue: rawStatus) else {
             return true
         }
         return status == .complete

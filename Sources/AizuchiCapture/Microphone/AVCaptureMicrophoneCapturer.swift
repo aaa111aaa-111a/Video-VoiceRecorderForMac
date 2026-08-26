@@ -117,15 +117,10 @@ public final class AVCaptureMicrophoneCapturer: NSObject, MicrophoneCapturing {
 
     private func observeDisconnect(of device: AVCaptureDevice) {
         removeDisconnectObserver()
-        // NOTE(uncertain): `.AVCaptureDeviceWasDisconnected` is AVFoundation's
-        // long-standing (pre-Swift-concurrency-era) notification name, bridged from
-        // the Objective-C `AVCaptureDeviceWasDisconnectedNotification` constant. The
-        // exact Swift-side spelling is not something this module can verify without a
-        // compiler; if it has since been renamed, this observer simply never fires
-        // and disconnect is only surfaced indirectly (the session stops delivering
-        // sample buffers).
+        // AVCaptureDevice.wasDisconnectedNotification posts the device as the
+        // notification object; we only care about the one we are recording from.
         disconnectObserver = NotificationCenter.default.addObserver(
-            forName: .AVCaptureDeviceWasDisconnected,
+            forName: AVCaptureDevice.wasDisconnectedNotification,
             object: nil,
             queue: nil
         ) { [weak self] notification in

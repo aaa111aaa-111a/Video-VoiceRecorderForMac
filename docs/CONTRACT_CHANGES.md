@@ -6,7 +6,7 @@ Phase 1 の各ワークストリームが `AizuchiCore` の契約に不足を見
 
 ---
 
-## B (AizuchiCapture): `RecordingConfiguration` に `excludesOwnWindows` が無い
+## B (AizuchiCapture): `RecordingConfiguration` に `excludesOwnWindows` が無い — **対応済み**
 
 `RecordingSettings.excludesOwnWindows`（ユーザーが「自分のウインドウを録画から除外
 する」を切り替えられる設定）はあるが、キャプチャ層が実際に受け取る
@@ -26,3 +26,9 @@ Phase 1 の各ワークストリームが `AizuchiCore` の契約に不足を見
 `RecordingConfiguration.resolve(settings:...)` で `settings.excludesOwnWindows` を
 渡すようにする。そうすれば `SCStreamScreenCapturer` はこの値を見て除外の有無を
 切り替えられる。
+
+**統合時の対応（Phase 2）**: 提案どおり `RecordingConfiguration` に
+`excludesOwnWindows` を追加し、`resolve(settings:...)` で
+`settings.excludesOwnWindows` を渡すようにした。`SCStreamScreenCapturer` は
+この値が false のとき `ownBundleIdentifier: nil` を渡す（純粋関数
+`bundleIdentifiersToExcludeFromDisplay` は nil を「何も除外しない」として扱う）。

@@ -71,7 +71,11 @@ public final class SCStreamScreenCapturer: NSObject, ScreenCapturing {
 
         let filter: SCContentFilter
         do {
-            filter = try ContentFilterBuilder.makeFilter(for: target, content: content, ownBundleIdentifier: Bundle.main.bundleIdentifier)
+            filter = try ContentFilterBuilder.makeFilter(
+                for: target,
+                content: content,
+                ownBundleIdentifier: configuration.excludesOwnWindows ? Bundle.main.bundleIdentifier : nil
+            )
         } catch {
             throw ScreenCaptureErrorTranslator.translate(error, context: .startCapture)
         }

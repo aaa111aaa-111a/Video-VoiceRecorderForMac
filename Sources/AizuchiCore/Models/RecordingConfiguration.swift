@@ -15,6 +15,9 @@ public struct RecordingConfiguration: Equatable, Sendable {
     public var capturesSystemAudio: Bool
     public var capturesMicrophone: Bool
     public var excludesOwnAudio: Bool
+    /// Keep Aizuchi's own windows out of a whole-display recording, so the video
+    /// does not show the recorder that made it.
+    public var excludesOwnWindows: Bool
     public var audioFormat: AudioStreamFormat
     public var writesSeparateAudioFiles: Bool
 
@@ -29,6 +32,7 @@ public struct RecordingConfiguration: Equatable, Sendable {
         capturesSystemAudio: Bool,
         capturesMicrophone: Bool,
         excludesOwnAudio: Bool,
+        excludesOwnWindows: Bool = true,
         audioFormat: AudioStreamFormat = .canonical,
         writesSeparateAudioFiles: Bool = false
     ) {
@@ -42,6 +46,7 @@ public struct RecordingConfiguration: Equatable, Sendable {
         self.capturesSystemAudio = capturesSystemAudio
         self.capturesMicrophone = capturesMicrophone
         self.excludesOwnAudio = excludesOwnAudio
+        self.excludesOwnWindows = excludesOwnWindows
         self.audioFormat = audioFormat
         self.writesSeparateAudioFiles = writesSeparateAudioFiles
     }
@@ -85,6 +90,7 @@ public struct RecordingConfiguration: Equatable, Sendable {
             capturesSystemAudio: settings.systemAudioEnabled,
             capturesMicrophone: settings.microphoneEnabled,
             excludesOwnAudio: settings.excludesOwnAudio,
+            excludesOwnWindows: settings.excludesOwnWindows,
             audioFormat: .canonical,
             writesSeparateAudioFiles: settings.writesSeparateAudioFiles
         )
