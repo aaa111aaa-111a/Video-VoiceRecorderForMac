@@ -54,10 +54,6 @@ public enum AudioBufferBridging {
         var asbd = pcmBuffer.format.streamDescription.pointee
 
         var formatDescription: CMAudioFormatDescription?
-        // NOTE(uncertain): argument label spelling/order for CMAudioFormatDescriptionCreate
-        // matches the long-standing CoreMedia signature as best remembered; this cannot be
-        // compile-checked here (no local Swift toolchain). If CI reports a mismatch, the fix
-        // is limited to this one call site.
         let formatStatus = CMAudioFormatDescriptionCreate(
             allocator: kCFAllocatorDefault,
             asbd: &asbd,
@@ -113,6 +109,11 @@ public enum AudioBufferBridging {
             throw BridgingError.dataCopyFailed(setStatus)
         }
 
+        // The buffer was created with `dataReady: false`; nothing else flips that flag, and
+        // AVAssetWriterInput.append() silently refuses a buffer whose data is not ready —
+        // which would show up as a recording with no audio track at all.
+        CMSampleBufferSetDataReady(sampleBuffer)
+
         return sampleBuffer
     }
 
@@ -129,10 +130,8 @@ public enum AudioBufferBridging {
         }
         buffer.frameLength = frameCount
 
-        // NOTE(uncertain): CMSampleBufferCopyPCMDataIntoAudioBufferList's exact Swift label
-        // spelling ("at:frameCount:into:") is remembered from documentation/task guidance but
-        // not compiler-verified here. `sampleBuffer.withAudioBufferList { list, _ in ... }`
-        // (mentioned in docs/TASKS.md) is the fallback if this call site needs adjusting.
+        // `frameLength` is set above, so `mutableAudioBufferList`'s mDataByteSize fields
+        // describe exactly the frames we are asking for.
         let status = CMSampleBufferCopyPCMDataIntoAudioBufferList(
             sampleBuffer,
             at: 0,
