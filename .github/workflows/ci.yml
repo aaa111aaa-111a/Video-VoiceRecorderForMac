@@ -45,9 +45,15 @@ jobs:
           test -f dist/OptiRecord.app/Contents/Info.plist
           codesign --verify --verbose dist/OptiRecord.app
 
+      # upload-artifact does not preserve the executable bit or symlinks, which would
+      # leave a downloaded .app unable to launch. Ditto it into a zip first so the
+      # bundle survives the round trip intact, signature included.
+      - name: Zip the bundle
+        run: ditto -c -k --keepParent dist/OptiRecord.app dist/OptiRecord.zip
+
       - name: Upload artifact
         uses: actions/upload-artifact@v4
         with:
           name: OptiRecord-app
-          path: dist/OptiRecord.app
+          path: dist/OptiRecord.zip
           if-no-files-found: error

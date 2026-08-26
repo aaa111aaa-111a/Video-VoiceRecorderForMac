@@ -33,20 +33,67 @@ OptiRecord は ScreenCaptureKit を使って **画面 + システム音声 + マ
 macOS 15 以降ではマイクも ScreenCaptureKit 経由で取得し、同一クロックで
 扱うことでズレをさらに小さくします。
 
-## ビルド
+## Mac で動かす
+
+### 必要なもの
+
+- Apple Silicon の Mac、macOS 14 (Sonoma) 以降
+- **Xcode Command Line Tools**（Xcode 本体は不要）
+
+```sh
+xcode-select --install     # 未インストールなら
+swift --version            # Swift 5.9 以降が出れば OK
+```
+
+### 手順
 
 ```sh
 git clone https://github.com/aaa111aaa-111a/Video-VoiceRecorderForMac.git
 cd Video-VoiceRecorderForMac
-make app          # dist/OptiRecord.app を生成（ad-hoc 署名）
-make install      # /Applications へコピー
+make app       # dist/OptiRecord.app を生成（3〜5 分程度）
+make install   # /Applications へコピー
+open /Applications/OptiRecord.app
 ```
 
-`swift build` / `swift test` も単体で動きます（Xcode プロジェクトは持ちません）。
+`make app` は `swift build` に加えて、`.app` バンドルの組み立て・Info.plist の
+生成・ad-hoc 署名までを行います（`Scripts/build-app.sh`）。
 
-初回起動時に **システム設定 > プライバシーとセキュリティ > 画面収録** で
-OptiRecord を許可してください。ad-hoc 署名のため、リビルドすると許可が
-リセットされることがあります。
+### 初回起動
+
+**OptiRecord はメニューバー常駐アプリです。Dock にアイコンは出ず、ウインドウも
+開きません。** 画面右上のメニューバーに ● アイコンが出ていれば起動しています。
+
+1. ● アイコンをクリックすると権限の案内が出ます
+2. **システム設定 > プライバシーとセキュリティ > 画面収録** で OptiRecord をオン
+   （システム音声＝相手の声はこの権限に紐づいています。マイク権限ではありません）
+3. **一度アプリを終了して起動し直す**（TCC の許可は再起動後に反映されます）
+4. 自分の声も録るなら、同じ画面の **マイク** でも OptiRecord をオン
+
+自分でビルドした ad-hoc 署名のアプリなので、**リビルドすると画面収録の許可が
+リセットされることがあります**。その場合は一覧から OptiRecord を削除（−）して
+から追加し直してください。
+
+### ビルドせずに試す
+
+CI が毎コミット `.app` を生成しています。GitHub の
+[Actions](https://github.com/aaa111aaa-111a/Video-VoiceRecorderForMac/actions) から
+最新の成功した CI 実行を開き、Artifacts の `OptiRecord-app` をダウンロードします。
+
+```sh
+cd ~/Downloads
+unzip OptiRecord-app.zip      # 中に OptiRecord.zip が入っています
+unzip OptiRecord.zip
+xattr -dr com.apple.quarantine OptiRecord.app   # ダウンロード隔離属性を外す
+cp -R OptiRecord.app /Applications/
+```
+
+### その他のコマンド
+
+```sh
+make build   # swift build のみ
+make test    # ユニットテスト（142 件）
+make clean   # dist/ とビルドキャッシュを削除
+```
 
 ## 使い方
 
